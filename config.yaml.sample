@@ -1,0 +1,7 @@
+server:
+  database_uri: ""
+  base_url: "http:/localhost:8181/api/"
+  username: "admin"
+  password: "district"
+  auth_method: "Basic"
+  auth_token: "123456"
