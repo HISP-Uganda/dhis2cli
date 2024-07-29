@@ -4,6 +4,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var userID string
+var idsFile string
+
 var UsersCmd = &cobra.Command{
 	Use:   "users",
 	Short: "Manage users",
@@ -22,4 +25,5 @@ func init() {
 	UsersCmd.AddCommand(RemoveRoleCmd)
 	UsersCmd.AddCommand(AddToOrgUnitCmd)
 	UsersCmd.AddCommand(RemoveFromOrgUnitCmd)
+	UsersCmd.AddCommand(SetPasswordCmd)
 }

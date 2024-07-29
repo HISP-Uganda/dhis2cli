@@ -10,7 +10,10 @@ INSTALL_DIR=$(HOME)/bin
 COMPLETION_FILE=$(HOME)/.$(BINARY_NAME)_completion.zsh
 SHELL=zsh
 SHELLRC_FILE=$(HOME)/.$(SHELL)rc
-VERSION=$(./get-version.sh)
+# BUILD_VERSION=$(./get-version.sh)
+CURRENT_DIR=$(pwd)
+VERSION := $(shell ./get-version.sh)
+SOURCE_DIR := .
 #ZSHRC_FILE=$(HOME)/.zshrc
 
 # All target: compile and build
@@ -18,7 +21,8 @@ all: test build
 
 # Build the project
 build:
-	$(GOBUILD) -ldflags "-X main.version=$(VERSION)" -o $(BINARY_NAME) -v
+	echo "version is $(VERSION)"
+	$(GOBUILD) -ldflags "-X cmd.version=$(VERSION)" -o $(BINARY_NAME) $(SOURCE_DIR)
 
 # Run the tests
 test:
@@ -41,11 +45,15 @@ deps:
 
 # Cross compile for Unix
 build-linux:
-	GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v
+	GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags "-X cmd.version=$(VERSION)" -o $(BINARY_UNIX) -v
+
+# Cross compile for Unix
+build-macos:
+	GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags "-X cmd.version=$(VERSION)" -o $(BINARY_UNIX) -v
 
 # Cross compile for Windows
 build-windows:
-	GOOS=windows GOARCH=amd64 $(GOBUILD) -o $(BINARY_NAME).exe -v
+	GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags "-X cmd.version=$(VERSION)" -o $(BINARY_NAME).exe -v
 
 # Install the binary to $HOME/bin
 install: build

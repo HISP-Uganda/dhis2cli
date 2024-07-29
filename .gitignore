@@ -1,5 +1,7 @@
 # app build output
 dhis2
+dhis2_unix
+dhis2_windows
 
 # cross-compiled binaries
 dist/

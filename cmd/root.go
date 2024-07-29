@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"dhis2cli/client"
+	"dhis2cli/cmd/sms"
 	"dhis2cli/cmd/users"
 	"dhis2cli/config"
 	"fmt"
@@ -13,7 +14,7 @@ import (
 
 var cfgFile string
 
-const version = "v1.0.0"
+var version = "1.0.0"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -21,7 +22,7 @@ var rootCmd = &cobra.Command{
 	Use:     "dhis2",
 	Short:   "DHIS2 on your command-line",
 	Long: `A DHIS2 commandline application for the common DHIS2 tasks:
-The DHIS2 CLI is meant to bring some of DHIS2's power to your command-line.`,
+The DHIS2 CLI brings some of DHIS2's power to your command-line.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if cfgFile != "" {
 			config.LoadConfig(cfgFile)
@@ -60,12 +61,12 @@ func init() {
 		&cfgFile, "config", "c", "", "config file (default is $HOME/.dhis2cli.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "V", false, "Show some debug information")
 	rootCmd.PersistentFlags().StringVarP(&config.Paging, "paging", "", "true", "Whether to return lists of elements in pages.")
-	rootCmd.PersistentFlags().IntVarP(&config.Page, "page", "p", 1, "Page number to return.")
-	rootCmd.PersistentFlags().IntVarP(&config.PageSize, "page-size", "P", 10, "Number of elements to return for each page.")
-	rootCmd.PersistentFlags().StringVarP(&config.Fields, "fields", "f", "id,displayName", "Fields to display")
-	rootCmd.PersistentFlags().StringVarP(&config.Filter, "filter", "F", "", "Filters to apply")
-	rootCmd.PersistentFlags().StringVarP(&config.Order, "order", "O", "", "How to order the output:\nproperty:asc/iasc/desc/idesc")
-	rootCmd.PersistentFlags().StringVarP(&config.Query, "query", "q", "", "Query term used to search through all fields")
+	rootCmd.PersistentFlags().IntVarP(&config.GlobalParams.Page, "page", "p", 1, "Page number to return.")
+	rootCmd.PersistentFlags().IntVarP(&config.GlobalParams.PageSize, "page-size", "P", 10, "Number of elements to return for each page.")
+	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Fields, "fields", "f", "", "Fields to display")
+	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Filter, "filter", "F", "", "Filters to apply")
+	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Order, "order", "O", "", "How to order the output:\nproperty:asc/iasc/desc/idesc")
+	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Query, "query", "q", "", "Query term used to search through all fields")
 	rootCmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "", "table", "Output format: table/json/csv")
 	rootCmd.PersistentFlags().StringVarP(&config.OutputFile, "output-file", "o", "", "Output file")
 	rootCmd.PersistentFlags().BoolP("indent", "i", false, "Whether to indent JSON output")
@@ -74,6 +75,7 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.AddCommand(users.UsersCmd)
+	rootCmd.AddCommand(sms.SmsCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.

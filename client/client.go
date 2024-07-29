@@ -118,7 +118,8 @@ func (c *Client) DeleteResource(resourcePath string) (*resty.Response, error) {
 
 func (c *Client) PatchResource(resourcePath string, data interface{}) (*resty.Response, error) {
 	resp, err := c.RestClient.R().
-		SetHeader("Content-Type", "application/json").
+		SetHeader("Content-Type", "application/json-patch+json").
+		SetHeader("Accept", "application/json").
 		SetBody(data).
 		Patch(resourcePath)
 	if err != nil {
