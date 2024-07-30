@@ -4,7 +4,6 @@ import (
 	"dhis2cli/client"
 	"dhis2cli/config"
 	"dhis2cli/utils"
-	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
 )
@@ -25,23 +24,24 @@ var SentSMSCmd = &cobra.Command{
 		excludeKeys := []string{"query", "paging"}
 		params := config.GenerateParams(config.GlobalParams, defaultParams, additionalParams, excludeKeys)
 		fmt.Println("Params:", params)
-		resp, err := client.Dhis2Client.GetResource(
-			"/sms/outbound", params)
-		if err != nil {
-			fmt.Printf("Error fetching sent SMS: %v\n", err)
-			return
-		}
-		fmt.Println(string(resp.Body()))
-		err = json.Unmarshal(resp.Body(), &resp)
-		if err != nil {
-			fmt.Printf("Error unmarshalling users list: %v\n", err)
-			return
-		}
-		err = utils.DisplayTable(resp)
-		// err = utils.DisplayTable2(users["users"], true)
-		if err != nil {
-			fmt.Println("Error:", err)
-		}
+		utils.FetchResourceAndDisplay(client.Dhis2Client, "/sms/outbound", params, "outboundsmss", config.OutputFormat)
+		//resp, err := client.Dhis2Client.GetResource(
+		//	"/sms/outbound", params)
+		//if err != nil {
+		//	fmt.Printf("Error fetching sent SMS: %v\n", err)
+		//	return
+		//}
+		//fmt.Println(string(resp.Body()))
+		//err = json.Unmarshal(resp.Body(), &resp)
+		//if err != nil {
+		//	fmt.Printf("Error unmarshalling users list: %v\n", err)
+		//	return
+		//}
+		//err = utils.DisplayTable(resp)
+		//// err = utils.DisplayTable2(users["users"], true)
+		//if err != nil {
+		//	fmt.Println("Error:", err)
+		//}
 
 	},
 }

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -100,7 +101,20 @@ func DisplayTable(data any) error {
 	for _, row := range dataList {
 		tableRow := table.Row{}
 		for _, header := range headers {
-			tableRow = append(tableRow, row[header.(string)])
+
+			value := row[header.(string)]
+			formattedValue := formatValue(value)
+			tableRow = append(tableRow, formattedValue)
+			//switch value.(type) {
+			//case string, int, float64:
+			//	tableRow = append(tableRow, fmt.Sprintf("%v", value))
+			//default:
+			//	// tableRow = append(tableRow, fmt.Sprintf("%#v", value))
+			//	jsonValue, _ := json.Marshal(value)
+			//	tableRow = append(tableRow, string(jsonValue))
+			//}
+
+			// tableRow = append(tableRow, row[header.(string)])
 		}
 		t.AppendRow(tableRow)
 	}
@@ -112,4 +126,34 @@ func DisplayTable(data any) error {
 	t.Render()
 	// t.RenderCSV()
 	return nil
+}
+
+// formatValue formats the value for table display
+func formatValue(value any) string {
+	var strValue string
+	switch v := value.(type) {
+	case string:
+		strValue = v
+	case int, float64:
+		strValue = fmt.Sprintf("%v", v)
+	default:
+		jsonValue, _ := json.Marshal(v)
+		strValue = string(jsonValue)
+	}
+
+	if len(strValue) > 60 {
+		return truncateString(strValue, 60)
+	}
+	return strValue
+}
+
+// truncateString truncates a string to a given length and adds ellipsis
+func truncateString(str string, length int) string {
+	if len(str) <= length {
+		return str
+	}
+	// Decide whether to show start and end with ellipsis or just the start
+	start := str[:length/2]
+	end := str[len(str)-length/2:]
+	return fmt.Sprintf("%s ... %s", start, end)
 }

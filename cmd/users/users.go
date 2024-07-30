@@ -1,6 +1,7 @@
 package users
 
 import (
+	"dhis2cli/cmd/users/usergroup"
 	"github.com/spf13/cobra"
 )
 
@@ -26,4 +27,5 @@ func init() {
 	UsersCmd.AddCommand(AddToOrgUnitCmd)
 	UsersCmd.AddCommand(RemoveFromOrgUnitCmd)
 	UsersCmd.AddCommand(SetPasswordCmd)
+	UsersCmd.AddCommand(usergroup.UserGroupsCmd)
 }

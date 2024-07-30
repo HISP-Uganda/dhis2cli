@@ -60,7 +60,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(
 		&cfgFile, "config", "c", "", "config file (default is $HOME/.dhis2cli.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "V", false, "Show some debug information")
-	rootCmd.PersistentFlags().StringVarP(&config.Paging, "paging", "", "true", "Whether to return lists of elements in pages.")
+	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Paging, "paging", "", "true", "Whether to return lists of elements in pages.")
 	rootCmd.PersistentFlags().IntVarP(&config.GlobalParams.Page, "page", "p", 1, "Page number to return.")
 	rootCmd.PersistentFlags().IntVarP(&config.GlobalParams.PageSize, "page-size", "P", 10, "Number of elements to return for each page.")
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Fields, "fields", "f", "", "Fields to display")

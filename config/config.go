@@ -17,15 +17,9 @@ type Config struct {
 	} `yaml:"server"`
 }
 
-var Paging string
-var Fields string
-var Filter string
-var Query string
-var Order string
-var Page int
-var PageSize int
 var OutputFormat string
 var OutputFile string
+var TableMaxStringLength int
 var Verbose bool
 
 type GlobalParamsConfig struct {
@@ -81,6 +75,10 @@ func GenerateParams(config GlobalParamsConfig, defaultParams, additionalParams m
 	if config.Paging == "true" {
 		params["page"] = fmt.Sprintf("%d", config.Page)
 		params["pageSize"] = fmt.Sprintf("%d", config.PageSize)
+	}
+	if config.Paging == "false" {
+		delete(params, "pageSize")
+		delete(params, "page")
 	}
 
 	// Merge in additionalParams, which should also overwrite any existing values
