@@ -2,11 +2,13 @@ package users
 
 import (
 	"dhis2cli/cmd/users/usergroup"
+	"dhis2cli/cmd/users/userrole"
 	"github.com/spf13/cobra"
 )
 
 var userID string
 var idsFile string
+var groupId string
 
 var UsersCmd = &cobra.Command{
 	Use:   "users",
@@ -28,4 +30,5 @@ func init() {
 	UsersCmd.AddCommand(RemoveFromOrgUnitCmd)
 	UsersCmd.AddCommand(SetPasswordCmd)
 	UsersCmd.AddCommand(usergroup.UserGroupsCmd)
+	UsersCmd.AddCommand(userrole.UserRolesCmd)
 }

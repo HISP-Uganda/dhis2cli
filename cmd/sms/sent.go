@@ -13,11 +13,11 @@ var SentSMSCmd = &cobra.Command{
 	Short: "Sent SMS messages",
 	Run: func(cmd *cobra.Command, args []string) {
 
-		defaultParams := map[string]string{
+		defaultParams := map[string]any{
 			"fields": "id,message,status,date,recipients",
 			"order":  "date:desc",
 		}
-		additionalParams := map[string]string{}
+		additionalParams := map[string]any{}
 		if status != "" {
 			additionalParams["filter"] = fmt.Sprintf("status:eq:%s", status)
 		}

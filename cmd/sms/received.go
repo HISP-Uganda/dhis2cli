@@ -13,11 +13,11 @@ var ReceivedSMSCmd = &cobra.Command{
 	Use:   "received",
 	Short: "Receive SMS messages",
 	Run: func(cmd *cobra.Command, args []string) {
-		defaultParams := map[string]string{
+		defaultParams := map[string]any{
 			"fields": "id,text,originator,smsstatus,user[userCredentials[username]],receiveddate",
 			"order":  "receiveddate:desc",
 		}
-		additionalParams := map[string]string{}
+		additionalParams := map[string]any{}
 		if status != "" {
 			additionalParams["filter"] = fmt.Sprintf("status:eq:%s", status)
 		}

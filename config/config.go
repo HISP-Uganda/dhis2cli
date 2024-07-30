@@ -27,7 +27,7 @@ type GlobalParamsConfig struct {
 	Fields   string
 	Order    string
 	Query    string
-	Filter   string
+	Filter   []string
 	Page     int
 	PageSize int
 }
@@ -48,8 +48,8 @@ func LoadConfig(path string) {
 
 // GenerateParams generates a map of parameters from the global config,
 // applies defaultParams, merges in any additionalParams, and excludes any keys in excludeKeys.
-func GenerateParams(config GlobalParamsConfig, defaultParams, additionalParams map[string]string, excludeKeys []string) map[string]string {
-	params := make(map[string]string)
+func GenerateParams(config GlobalParamsConfig, defaultParams, additionalParams map[string]any, excludeKeys []string) map[string]any {
+	params := make(map[string]any)
 
 	// Start with defaultParams
 	for key, value := range defaultParams {
@@ -69,7 +69,7 @@ func GenerateParams(config GlobalParamsConfig, defaultParams, additionalParams m
 	if config.Query != "" {
 		params["query"] = config.Query
 	}
-	if config.Filter != "" {
+	if len(config.Filter) > 0 {
 		params["filter"] = config.Filter
 	}
 	if config.Paging == "true" {

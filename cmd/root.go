@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"dhis2cli/client"
+	"dhis2cli/cmd/apps"
 	"dhis2cli/cmd/sms"
 	"dhis2cli/cmd/users"
 	"dhis2cli/config"
@@ -64,7 +65,7 @@ func init() {
 	rootCmd.PersistentFlags().IntVarP(&config.GlobalParams.Page, "page", "p", 1, "Page number to return.")
 	rootCmd.PersistentFlags().IntVarP(&config.GlobalParams.PageSize, "page-size", "P", 10, "Number of elements to return for each page.")
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Fields, "fields", "f", "", "Fields to display")
-	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Filter, "filter", "F", "", "Filters to apply")
+	rootCmd.PersistentFlags().StringSliceVarP(&config.GlobalParams.Filter, "filters", "F", []string{}, "Filters to apply")
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Order, "order", "O", "", "How to order the output:\nproperty:asc/iasc/desc/idesc")
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Query, "query", "q", "", "Query term used to search through all fields")
 	rootCmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "", "table", "Output format: table/json/csv")
@@ -76,6 +77,7 @@ func init() {
 	// when this action is called directly.
 	rootCmd.AddCommand(users.UsersCmd)
 	rootCmd.AddCommand(sms.SmsCmd)
+	rootCmd.AddCommand(apps.AppsCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.

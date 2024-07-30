@@ -3,8 +3,10 @@ package client
 import (
 	"dhis2cli/config"
 	"errors"
+	"fmt"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
+	"net/url"
 	"strings"
 )
 
@@ -71,12 +73,33 @@ func (s *Server) NewClient() (*Client, error) {
 	}, nil
 }
 
-func (c *Client) GetResource(resourcePath string, params map[string]string) (*resty.Response, error) {
+func (c *Client) GetResource(resourcePath string, params map[string]any) (*resty.Response, error) {
 	request := c.RestClient.R()
 
-	if params != nil {
-		request.SetQueryParams(params)
+	// Prepare query parameters
+	queryParams := url.Values{}
+
+	for key, value := range params {
+		switch v := value.(type) {
+		case string:
+			queryParams.Add(key, v)
+		case []string:
+			for _, item := range v {
+				queryParams.Add(key, item)
+			}
+		default:
+			return nil, fmt.Errorf("unsupported query parameter type for key %s", key)
+		}
 	}
+
+	// Set the query parameters
+	if len(queryParams) > 0 {
+		request.SetQueryParamsFromValues(queryParams)
+	}
+
+	//if params != nil {
+	//	request.SetQueryParams(params)
+	//}
 
 	resp, err := request.Get(resourcePath)
 	if err != nil {

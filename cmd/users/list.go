@@ -13,7 +13,7 @@ var ListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all users",
 	Run: func(cmd *cobra.Command, args []string) {
-		defaultParams := map[string]string{
+		defaultParams := map[string]any{
 			"fields":          "id,displayName,access,email,username,lastLogin",
 			"order":           "firstName:asc,surname:asc",
 			"paging":          "true",
@@ -21,14 +21,10 @@ var ListCmd = &cobra.Command{
 			"includeChildren": "true",
 			"selfRegistered":  "false",
 		}
-		additionalParams := map[string]string{}
+		additionalParams := map[string]any{}
 		// excludeKeys := []string{}
 		params := config.GenerateParams(config.GlobalParams, defaultParams, additionalParams, nil)
 		utils.FetchResourceAndDisplay(client.Dhis2Client, "/users", params, "users", config.OutputFormat)
 
 	},
-}
-
-func init() {
-	ListCmd.Flags().StringVarP(&format, "format", "", "table", "Response format: table/json/csv")
 }

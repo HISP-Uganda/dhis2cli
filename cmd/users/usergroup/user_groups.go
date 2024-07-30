@@ -25,14 +25,14 @@ var ListUserGroupsCmd = &cobra.Command{
 	Short: "List all user groups",
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Implement listing all user groups
-		defaultParams := map[string]string{
+		defaultParams := map[string]any{
 			"fields":   "id,displayName,user[id,displayName]",
 			"order":    "name:asc",
 			"paging":   "true",
 			"page":     "1",
 			"pageSize": "50",
 		}
-		additionalParams := map[string]string{}
+		additionalParams := map[string]any{}
 		// excludeKeys := []string{}
 		params := config.GenerateParams(config.GlobalParams, defaultParams, additionalParams, nil)
 		fmt.Println("PARAMS", params)
