@@ -2,6 +2,7 @@ package tracker
 
 import (
 	"dhis2cli/cmd/tracker/trackedentities"
+	"dhis2cli/cmd/tracker/trackedentitytypes"
 	"github.com/spf13/cobra"
 )
 
@@ -11,5 +12,6 @@ var TrackerCmd = &cobra.Command{
 }
 
 func init() {
-	TrackerCmd.AddCommand(trackedentities.TrackedEntities)
+	TrackerCmd.AddCommand(trackedentities.TrackedEntitiesCmd)
+	TrackerCmd.AddCommand(trackedentitytypes.TrackedEntityTypeCmd)
 }

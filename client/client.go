@@ -58,7 +58,7 @@ func (s *Server) NewClient() (*Client, error) {
 	client.SetHeaders(map[string]string{
 		"Accept":       "application/json",
 		"Content-Type": "application/json",
-		"User-Agent":   "Dispatcher2-Go",
+		"User-Agent":   "HIPS-Uganda DHIS2 CLI",
 	})
 	client.SetDisableWarn(true)
 	switch s.AuthMethod {
@@ -79,8 +79,10 @@ func (c *Client) GetResource(resourcePath string, params map[string]any) (*resty
 
 	// Prepare query parameters
 	queryParams := url.Values{}
+	// XXX: this ensures that all parameters added via -Q to and command are added
+	newParams := config.CombineMaps(params, config.ParamsMap(config.QueryParams))
 
-	for key, value := range params {
+	for key, value := range newParams {
 		switch v := value.(type) {
 		case string:
 			queryParams.Add(key, v)

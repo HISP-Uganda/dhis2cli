@@ -62,4 +62,4 @@ install: build
 	echo "Installed $(BINARY_NAME) to $(INSTALL_DIR)"
 	# $(INSTALL_DIR)/$(BINARY_NAME) completion zsh >> $(COMPLETION_FILE)
 	echo "Generated completion script for $(BINARY_NAME) and appended to $(SHELLRC_FILE)"
-	grep -qxF 'source <($(INSTALL_DIR)/$(BINARY_NAME)' $(SHELLRC_FILE) || echo 'source <($(INSTALL_DIR)/$(BINARY_NAME) completion zsh)' >> $(SHELLRC_FILE)
+	grep -qxF 'source <($(INSTALL_DIR)/$(BINARY_NAME) completion zsh)' $(SHELLRC_FILE) || echo 'source <($(INSTALL_DIR)/$(BINARY_NAME) completion zsh)' >> $(SHELLRC_FILE)

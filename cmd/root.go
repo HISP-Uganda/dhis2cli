@@ -3,6 +3,9 @@ package cmd
 import (
 	"dhis2cli/client"
 	"dhis2cli/cmd/apps"
+	"dhis2cli/cmd/maintenance"
+	"dhis2cli/cmd/metadata"
+	"dhis2cli/cmd/orgunit"
 	"dhis2cli/cmd/sms"
 	"dhis2cli/cmd/tracker"
 	"dhis2cli/cmd/users"
@@ -69,7 +72,8 @@ func init() {
 	rootCmd.PersistentFlags().StringSliceVarP(&config.GlobalParams.Filter, "filters", "F", []string{}, "Filters to apply")
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Order, "order", "O", "", "How to order the output:\nproperty:asc/iasc/desc/idesc")
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Query, "query", "q", "", "Query term used to search through all fields")
-	rootCmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "", "table", "Output format: table/json/csv")
+	rootCmd.PersistentFlags().StringSliceVarP(&config.QueryParams, "query-params", "Q", []string{}, "Query parameters to add to API call")
+	rootCmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "", "table", "Output format: table/json/csv/string")
 	rootCmd.PersistentFlags().StringVarP(&config.OutputFile, "output-file", "o", "", "Output file")
 	rootCmd.PersistentFlags().BoolP("indent", "i", false, "Whether to indent JSON output")
 
@@ -80,6 +84,11 @@ func init() {
 	rootCmd.AddCommand(sms.SmsCmd)
 	rootCmd.AddCommand(apps.AppsCmd)
 	rootCmd.AddCommand(tracker.TrackerCmd)
+	rootCmd.AddCommand(orgunit.OrgUnitCmd)
+	rootCmd.AddCommand(metadata.MetaDataCmd)
+	rootCmd.AddCommand(maintenance.PingCmd)
+	rootCmd.AddCommand(maintenance.InfoCmd)
+	rootCmd.AddCommand(maintenance.MaintenanceCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.

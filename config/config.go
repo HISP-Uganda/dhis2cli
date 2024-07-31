@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"log"
+	"strings"
 )
 
 type Config struct {
@@ -18,6 +19,7 @@ type Config struct {
 }
 
 var OutputFormat string
+var QueryParams []string
 var OutputFile string
 var TableMaxStringLength int
 var Verbose bool
@@ -92,4 +94,37 @@ func GenerateParams(config GlobalParamsConfig, defaultParams, additionalParams m
 	}
 
 	return params
+}
+
+// ParamsMap takes a slice of "key=value" strings and returns a map[string]string
+func ParamsMap(pairs []string) map[string]any {
+	params := make(map[string]any)
+	for _, pair := range pairs {
+		parts := strings.SplitN(pair, "=", 2)
+		if len(parts) == 2 {
+			key := parts[0]
+			value := parts[1]
+			params[key] = value
+		}
+	}
+	return params
+}
+
+// CombineMaps merges two maps of type map[string]interface{} into a new map.
+// Values from the second map will overwrite values from the first map if they have the same key.
+func CombineMaps(map1, map2 map[string]interface{}) map[string]interface{} {
+	combined := make(map[string]interface{})
+
+	// Add all entries from map1 to the combined map
+	for key, value := range map1 {
+		combined[key] = value
+	}
+
+	// Add all entries from map2 to the combined map
+	// This will overwrite any duplicate keys from map1
+	for key, value := range map2 {
+		combined[key] = value
+	}
+
+	return combined
 }

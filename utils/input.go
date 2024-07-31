@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/csv"
 	"os"
+	"regexp"
 )
 
 func ReadCSV(filename string) ([][]string, error) {
@@ -23,4 +24,11 @@ func ReadCSV(filename string) ([][]string, error) {
 	}
 
 	return [][]string{}, nil
+}
+
+// IsValidDHIS2UID checks if the given string matches the DHIS2 UID format.
+func IsValidDHIS2UID(uid string) bool {
+	// Regular expression to match 11 alphanumeric characters
+	re := regexp.MustCompile(`^[A-Za-z0-9]{11}$`)
+	return re.MatchString(uid)
 }

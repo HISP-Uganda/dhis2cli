@@ -74,6 +74,10 @@ func FetchResourceAndDisplay2(client *client.Client, endpoint string, params map
 		fmt.Printf("Error fetching resource from %s: %v\n", endpoint, err)
 		return
 	}
+	if outputFormat == "string" {
+		fmt.Println(string(resp.Body()))
+		return
+	}
 
 	var responseMap interface{}
 	err = json.Unmarshal(resp.Body(), &responseMap)
