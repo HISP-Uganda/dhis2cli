@@ -105,16 +105,7 @@ func DisplayTable(data any) error {
 			value := row[header.(string)]
 			formattedValue := formatValue(value)
 			tableRow = append(tableRow, formattedValue)
-			//switch value.(type) {
-			//case string, int, float64:
-			//	tableRow = append(tableRow, fmt.Sprintf("%v", value))
-			//default:
-			//	// tableRow = append(tableRow, fmt.Sprintf("%#v", value))
-			//	jsonValue, _ := json.Marshal(value)
-			//	tableRow = append(tableRow, string(jsonValue))
-			//}
 
-			// tableRow = append(tableRow, row[header.(string)])
 		}
 		t.AppendRow(tableRow)
 	}
@@ -125,6 +116,58 @@ func DisplayTable(data any) error {
 	// Render the table
 	t.Render()
 	// t.RenderCSV()
+	return nil
+}
+
+// DisplayOrderedTable displays the data in a table format with ordered keys.
+func DisplayOrderedTable(data any, keyOrder []string) error {
+	// Check if data is of type []any
+	slice, ok := data.([]any)
+	if !ok {
+		return errors.New("data is not of type []any")
+	}
+
+	if len(slice) == 0 {
+		fmt.Println("No data to display")
+		return nil
+	}
+
+	// Convert each element to map[string]any
+	var dataList []map[string]any
+	for _, v := range slice {
+		if m, ok := v.(map[string]any); ok {
+			dataList = append(dataList, m)
+		} else {
+			return errors.New("element is not of type map[string]any")
+		}
+	}
+
+	// Create a new table writer
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+
+	// Use keyOrder as the table headers
+	headers := table.Row{}
+	for _, key := range keyOrder {
+		headers = append(headers, key)
+	}
+	t.AppendHeader(headers)
+
+	// Append rows to the table
+	for _, row := range dataList {
+		tableRow := table.Row{}
+		for _, key := range keyOrder {
+			value := row[key]
+			formattedValue := formatValue(value)
+			tableRow = append(tableRow, formattedValue)
+		}
+		t.AppendRow(tableRow)
+	}
+
+	t.SetStyle(table.StyleLight)
+
+	// Render the table
+	t.Render()
 	return nil
 }
 

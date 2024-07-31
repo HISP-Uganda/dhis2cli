@@ -24,7 +24,7 @@ var ListCmd = &cobra.Command{
 		additionalParams := map[string]any{}
 		// excludeKeys := []string{}
 		params := config.GenerateParams(config.GlobalParams, defaultParams, additionalParams, nil)
-		utils.FetchResourceAndDisplay(client.Dhis2Client, "/users", params, "users", config.OutputFormat)
+		utils.FetchResourceAndDisplay2(client.Dhis2Client, "/users", params, "users", config.OutputFormat)
 
 	},
 }

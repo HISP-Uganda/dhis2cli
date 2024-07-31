@@ -4,6 +4,7 @@ import (
 	"dhis2cli/client"
 	"dhis2cli/cmd/apps"
 	"dhis2cli/cmd/sms"
+	"dhis2cli/cmd/tracker"
 	"dhis2cli/cmd/users"
 	"dhis2cli/config"
 	"fmt"
@@ -78,6 +79,7 @@ func init() {
 	rootCmd.AddCommand(users.UsersCmd)
 	rootCmd.AddCommand(sms.SmsCmd)
 	rootCmd.AddCommand(apps.AppsCmd)
+	rootCmd.AddCommand(tracker.TrackerCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -7,6 +7,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -148,5 +149,26 @@ func (c *Client) PatchResource(resourcePath string, data interface{}) (*resty.Re
 	if err != nil {
 		log.Fatalf("Error when calling `PatchResource`: %v", err)
 	}
+	return resp, err
+}
+
+func (c *Client) PostFileResource(resourcePath, fieldName, filePath string) (*resty.Response, error) {
+	// Open the file
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Fatalf("Error when opening file: %v", err)
+		return nil, err
+	}
+	defer file.Close()
+
+	// Perform the POST request with the file
+	resp, err := c.RestClient.R().
+		SetFileReader(fieldName, filePath, file).
+		Post(resourcePath)
+	if err != nil {
+		log.Fatalf("Error when calling `PostFileResource`: %v", err)
+		return nil, err
+	}
+
 	return resp, err
 }
