@@ -20,18 +20,20 @@ type Config struct {
 
 var OutputFormat string
 var QueryParams []string
+var QueryParamsString string
 var OutputFile string
 var TableMaxStringLength int
 var Verbose bool
 
 type GlobalParamsConfig struct {
-	Paging   string
-	Fields   string
-	Order    string
-	Query    string
-	Filter   []string
-	Page     int
-	PageSize int
+	Paging     string
+	Fields     string
+	Order      string
+	Query      string
+	Filter     []string
+	Page       int
+	PageSize   int
+	TotalPages string
 }
 
 var GlobalParams GlobalParamsConfig

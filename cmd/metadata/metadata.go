@@ -49,6 +49,7 @@ var KnownResources = []string{
 	"legendSets",
 	"mapViews",
 	"maps",
+	"me",
 	"messageConversations",
 	"metadataVersions",
 	"minMaxDataElements",
@@ -87,7 +88,6 @@ var KnownResources = []string{
 	"systemSettings",
 	"trackedEntityAttributes",
 	"trackedEntityInstanceFilters",
-	"trackedEntityInstances",
 	"trackedEntityTypes",
 	"userGroups",
 	"userRoles",
@@ -104,4 +104,5 @@ func init() {
 	MetaDataCmd.AddCommand(ListCmd)
 	MetaDataCmd.AddCommand(ViewResourcesCmd)
 	MetaDataCmd.AddCommand(IdentityCmd)
+	MetaDataCmd.AddCommand(ValidateCmd)
 }

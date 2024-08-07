@@ -69,7 +69,7 @@ dhis2 sms send toPhoneNumbers --message-file "message.txt" --recipients "+123456
 			Recipients: uniqueNumbers,
 		}
 		resp, err := client.Dhis2Client.PostResource(
-			"/sms/outbound", payload)
+			"/sms/outbound", nil, payload)
 		if err != nil {
 			fmt.Printf("Error sending SMS: %v\n", err)
 			return

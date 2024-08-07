@@ -6,6 +6,8 @@ func init() {
 	TrackedEntityTypeCmd.AddCommand(ListCmd)
 }
 
+var program string
+var orgUnit string
 var TrackedEntityTypeCmd = &cobra.Command{
 	Use:   "trackedEntityType",
 	Short: "Manage tracked entity type",

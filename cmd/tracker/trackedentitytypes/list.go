@@ -25,3 +25,6 @@ var ListCmd = &cobra.Command{
 		utils.FetchResourceAndDisplay2(client.Dhis2Client, "/trackedEntityTypes", params, "trackedEntityTypes", config.OutputFormat)
 	},
 }
+
+func init() {
+}

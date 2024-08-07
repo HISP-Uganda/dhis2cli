@@ -81,6 +81,7 @@ func (c *Client) GetResource(resourcePath string, params map[string]any) (*resty
 	queryParams := url.Values{}
 	// XXX: this ensures that all parameters added via -Q to and command are added
 	newParams := config.CombineMaps(params, config.ParamsMap(config.QueryParams))
+	newParams = config.CombineMaps(newParams, config.ParamsMap(strings.Split(config.QueryParamsString, ",")))
 
 	for key, value := range newParams {
 		switch v := value.(type) {
@@ -100,10 +101,6 @@ func (c *Client) GetResource(resourcePath string, params map[string]any) (*resty
 		request.SetQueryParamsFromValues(queryParams)
 	}
 
-	//if params != nil {
-	//	request.SetQueryParams(params)
-	//}
-
 	resp, err := request.Get(resourcePath)
 	if err != nil {
 		log.Fatalf("Error when calling `GetResource`: %v", err)
@@ -111,8 +108,33 @@ func (c *Client) GetResource(resourcePath string, params map[string]any) (*resty
 	return resp, err
 }
 
-func (c *Client) PostResource(resourcePath string, data interface{}) (*resty.Response, error) {
-	resp, err := c.RestClient.R().
+func (c *Client) PostResource(resourcePath string, params map[string]any, data interface{}) (*resty.Response, error) {
+	request := c.RestClient.R()
+	// Prepare query parameters
+	queryParams := url.Values{}
+	// XXX: this ensures that all parameters added via -Q to and command are added
+	newParams := config.CombineMaps(params, config.ParamsMap(config.QueryParams))
+	newParams = config.CombineMaps(newParams, config.ParamsMap(strings.Split(config.QueryParamsString, ",")))
+
+	for key, value := range newParams {
+		switch v := value.(type) {
+		case string:
+			queryParams.Add(key, v)
+		case []string:
+			for _, item := range v {
+				queryParams.Add(key, item)
+			}
+		default:
+			return nil, fmt.Errorf("unsupported query parameter type for key %s", key)
+		}
+	}
+
+	// Set the query parameters
+	if len(queryParams) > 0 {
+		request.SetQueryParamsFromValues(queryParams)
+	}
+
+	resp, err := request.
 		SetHeader("Content-Type", "application/json").
 		SetBody(data).
 		Post(resourcePath)
@@ -172,5 +194,58 @@ func (c *Client) PostFileResource(resourcePath, fieldName, filePath string) (*re
 		return nil, err
 	}
 
+	return resp, err
+}
+
+func (c *Client) ExportResource(resourcePath string, params map[string]any, exportFormat string) (*resty.Response, error) {
+	fmt.Printf("Exporting: %v,  exportFormat: %s\n", resourcePath, exportFormat)
+	request := c.RestClient.R()
+
+	// Prepare query parameters
+	queryParams := url.Values{}
+	// Combine parameters
+	newParams := config.CombineMaps(params, config.ParamsMap(config.QueryParams))
+	newParams = config.CombineMaps(newParams, config.ParamsMap(strings.Split(config.QueryParamsString, ",")))
+
+	for key, value := range newParams {
+		switch v := value.(type) {
+		case string:
+			queryParams.Add(key, v)
+		case []string:
+			for _, item := range v {
+				queryParams.Add(key, item)
+			}
+		default:
+			return nil, fmt.Errorf("unsupported query parameter type for key %s", key)
+		}
+	}
+
+	// Set the query parameters
+	if len(queryParams) > 0 {
+		request.SetQueryParamsFromValues(queryParams)
+	}
+
+	// Set the Accept header based on the export format
+	switch strings.ToLower(exportFormat) {
+	case "text/csv", "application/csv":
+		request.SetHeader("Accept", "application/csv")
+	case "application/json":
+		request.SetHeader("Accept", "application/json")
+	case "application/csv+gzip":
+		request.SetHeader("Accept", "application/csv+gzip")
+	case "application/json+gzip":
+		request.SetHeader("Accept", "application/json+gzip")
+	case "application/csv+zip":
+		request.SetHeader("Accept", "application/csv+zip")
+	case "application/json+zip":
+		request.SetHeader("Accept", "application/json+zip")
+	default:
+		return nil, fmt.Errorf("unsupported export format: %s", exportFormat)
+	}
+
+	resp, err := request.Get(resourcePath)
+	if err != nil {
+		log.Fatalf("Error when calling `ExportResource`: %v", err)
+	}
 	return resp, err
 }

@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -132,6 +134,92 @@ func FetchResourceAndDisplay2(client *client.Client, endpoint string, params map
 		}
 		// csvString, err := AnyToCSV(dataToDisplay)
 		// check for fields key in params argument to this function if not present use config.GlobalParams.Fields
+		if fields, ok := params["fields"]; ok {
+			fieldsStr := strings.Split(fields.(string), ",")
+			csvString, err := AnyToCSVWithOrder(dataToDisplay, fieldsStr)
+			if err != nil {
+				fmt.Printf("Error printing CSV %v\n", err)
+				return
+			}
+			fmt.Println(csvString)
+		} else {
+			csvString, err := AnyToCSV(dataToDisplay)
+			if err != nil {
+				fmt.Printf("Error printing CSV %v\n", err)
+				return
+			}
+			fmt.Println(csvString)
+		}
+
+	default:
+		fmt.Println("Unsupported output format:", outputFormat)
+	}
+}
+
+// PostResourceAndDisplay posts data to a resource and displays the response
+func PostResourceAndDisplay(client *client.Client, endpoint string, params map[string]any, data any, resource, outputFormat string) {
+	resp, err := client.PostResource(endpoint, params, data)
+	if err != nil {
+		fmt.Printf("Error posting resource to %s: %v\n", endpoint, err)
+		return
+	}
+
+	if outputFormat == "string" {
+		fmt.Println(string(resp.Body()))
+		return
+	}
+
+	var responseMap interface{}
+	err = json.Unmarshal(resp.Body(), &responseMap)
+	if err != nil {
+		fmt.Printf("Error unmarshalling response: %v\n", err)
+		return
+	}
+
+	switch outputFormat {
+	case "table":
+		var dataToDisplay interface{}
+		if resource != "" {
+			if resMap, ok := responseMap.(map[string]interface{}); ok {
+				dataToDisplay = resMap[resource]
+			} else {
+				fmt.Println("Resource key specified, but response is not a map")
+				return
+			}
+		} else {
+			dataToDisplay = responseMap
+		}
+		if fields, ok := params["fields"]; ok {
+			fieldsStr := strings.Split(fields.(string), ",")
+			if err := DisplayOrderedTable(dataToDisplay, fieldsStr); err != nil {
+				fmt.Println("Error displaying table:", err)
+			}
+		} else {
+			if err := DisplayTable(dataToDisplay); err != nil {
+				fmt.Println("Error displaying table:", err)
+			}
+		}
+
+	case "json":
+		prettyJson, err := PrintResponse(responseMap, true)
+		if err != nil {
+			fmt.Println("Error pretty printing JSON:", err)
+			return
+		}
+		fmt.Println(prettyJson)
+
+	case "csv":
+		var dataToDisplay interface{}
+		if resource != "" {
+			if resMap, ok := responseMap.(map[string]interface{}); ok {
+				dataToDisplay = resMap[resource]
+			} else {
+				fmt.Println("Resource key specified, but response is not a map")
+				return
+			}
+		} else {
+			dataToDisplay = responseMap
+		}
 		if fields, ok := params["fields"]; ok {
 			fieldsStr := strings.Split(fields.(string), ",")
 			csvString, err := AnyToCSVWithOrder(dataToDisplay, fieldsStr)
@@ -336,6 +424,35 @@ func AnyToCSVWithOrder(data any, keyOrder []string) (string, error) {
 	return buffer.String(), nil
 }
 
+// FetchExport downloads the exported resource in the specified format
+func FetchExport(client *client.Client, endpoint string, params map[string]any, mimeType string, outputFilePath string) {
+	// Determine the content type based on the export format
+	//contentType, err := GetContentType(exportFormat, "")
+	//if err != nil {
+	//	fmt.Printf("Error determining content type: %v\n", err)
+	//	return
+	//}
+
+	// Fetch the resource using the ExportResource function
+	resp, err := client.ExportResource(endpoint, params, mimeType)
+	if err != nil {
+		fmt.Printf("Error fetching export from %s: %v\n", endpoint, err)
+		return
+	}
+
+	// Determine a unique file path
+	uniqueFilePath := getUniqueFilePath(outputFilePath)
+
+	// Write the response body to the specified file
+	err = os.WriteFile(uniqueFilePath, resp.Body(), os.ModePerm)
+	if err != nil {
+		fmt.Printf("Error writing to file %s: %v\n", uniqueFilePath, err)
+		return
+	}
+
+	fmt.Printf("File successfully downloaded to %s\n", uniqueFilePath)
+}
+
 // create a function that takes []string and removes empty strings
 func removeEmptyStrings(s []string) []string {
 	var r []string
@@ -345,4 +462,27 @@ func removeEmptyStrings(s []string) []string {
 		}
 	}
 	return r
+}
+
+// getUniqueFilePath generates a unique file path by adding a numerical suffix if the file already exists
+func getUniqueFilePath(basePath string) string {
+	dir, file := filepath.Split(basePath)
+	ext := filepath.Ext(file)
+	baseName := strings.TrimSuffix(file, ext)
+
+	// Check if file exists, if not, return the base path
+	if _, err := os.Stat(basePath); os.IsNotExist(err) {
+		return basePath
+	}
+
+	// If file exists, generate a new file name with a numerical suffix
+	i := 1
+	for {
+		newFileName := fmt.Sprintf("%s (%d)%s", baseName, i, ext)
+		newFilePath := filepath.Join(dir, newFileName)
+		if _, err := os.Stat(newFilePath); os.IsNotExist(err) {
+			return newFilePath
+		}
+		i++
+	}
 }

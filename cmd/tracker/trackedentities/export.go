@@ -4,14 +4,17 @@ import (
 	"dhis2cli/client"
 	"dhis2cli/config"
 	"dhis2cli/utils"
+	"fmt"
 	"github.com/spf13/cobra"
 )
 
-var ListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List tracked entities",
+var exportFormat string
+var compressionType string
+var ExportCmd = &cobra.Command{
+	Use:   "export",
+	Short: "Export tracked entities",
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Implement fetching and displaying tracked entities
+		// TODO: Implement exporting tracked entities
 		defaultParams := map[string]any{
 			"fields":     "*",
 			"order":      "createdAt:desc",
@@ -35,13 +38,21 @@ var ListCmd = &cobra.Command{
 			additionalParams["orgunitMode"] = orgUnitMode
 		}
 		params := config.GenerateParams(config.GlobalParams, defaultParams, additionalParams, nil)
-		resource := ""
-		switch config.OutputFormat {
-		case "csv", "table":
-			resource = "instances"
+		mimeType, _ := utils.GetContentType(exportFormat, compressionType)
+		fileName := fmt.Sprintf("trackedEntities.%s", exportFormat)
+		switch compressionType {
+		case "zip":
+			fileName = fmt.Sprintf("%s.zip", fileName)
+		case "gzip":
+			fileName = fmt.Sprintf("%s.gz", fileName)
 		}
 
-		utils.FetchResourceAndDisplay2(client.Dhis2Client, "tracker/trackedEntities", params, resource, config.OutputFormat)
+		utils.FetchExport(client.Dhis2Client, "tracker/trackedEntities", params, mimeType, fileName)
 
 	},
+}
+
+func init() {
+	ExportCmd.Flags().StringVar(&exportFormat, "exportFormat", "json", "The export format")
+	ExportCmd.Flags().StringVar(&compressionType, "compression", "none", "The compression type. zip or gzip")
 }

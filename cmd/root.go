@@ -3,6 +3,7 @@ package cmd
 import (
 	"dhis2cli/client"
 	"dhis2cli/cmd/apps"
+	"dhis2cli/cmd/datastore"
 	"dhis2cli/cmd/maintenance"
 	"dhis2cli/cmd/metadata"
 	"dhis2cli/cmd/orgunit"
@@ -31,6 +32,8 @@ The DHIS2 CLI brings some of DHIS2's power to your command-line.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if cfgFile != "" {
 			config.LoadConfig(cfgFile)
+			client.InitServer()
+			client.Dhis2Client, _ = client.Dhis2Server.NewClient()
 		} else {
 			home, err := os.UserHomeDir()
 			cobra.CheckErr(err)
@@ -51,6 +54,7 @@ The DHIS2 CLI brings some of DHIS2's power to your command-line.`,
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
+		fmt.Printf("%s\n", err)
 		os.Exit(1)
 	}
 }
@@ -72,10 +76,19 @@ func init() {
 	rootCmd.PersistentFlags().StringSliceVarP(&config.GlobalParams.Filter, "filters", "F", []string{}, "Filters to apply")
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Order, "order", "O", "", "How to order the output:\nproperty:asc/iasc/desc/idesc")
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalParams.Query, "query", "q", "", "Query term used to search through all fields")
-	rootCmd.PersistentFlags().StringSliceVarP(&config.QueryParams, "query-params", "Q", []string{}, "Query parameters to add to API call")
+	rootCmd.PersistentFlags().StringSliceVarP(&config.QueryParams, "query-params", "Q", []string{},
+		"Query parameters to add to API call. Can be used multiple times")
+	rootCmd.PersistentFlags().StringVarP(&config.QueryParamsString, "query-params-string", "", "", "Multiple Query parameters string to add to API call")
 	rootCmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "", "table", "Output format: table/json/csv/string")
 	rootCmd.PersistentFlags().StringVarP(&config.OutputFile, "output-file", "o", "", "Output file")
 	rootCmd.PersistentFlags().BoolP("indent", "i", false, "Whether to indent JSON output")
+
+	_ = rootCmd.RegisterFlagCompletionFunc("format",
+		func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+			completions := []string{"json", "csv", "string", "table"}
+			return completions, cobra.ShellCompDirectiveNoFileComp
+		})
+	_ = rootCmd.MarkFlagFilename("config", ".yaml", ".yml", ".json")
 
 	rootCmd.SetVersionTemplate(fmt.Sprintf("DHIS2 CLI: %s\n", version))
 	// Cobra also supports local flags, which will only run
@@ -88,7 +101,8 @@ func init() {
 	rootCmd.AddCommand(metadata.MetaDataCmd)
 	rootCmd.AddCommand(maintenance.PingCmd)
 	rootCmd.AddCommand(maintenance.InfoCmd)
-	rootCmd.AddCommand(maintenance.MaintenanceCmd)
+	rootCmd.AddCommand(
+		maintenance.MaintenanceCmd, datastore.DataStoreCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
