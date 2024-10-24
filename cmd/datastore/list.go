@@ -37,7 +37,6 @@ var ListCmd = &cobra.Command{
 }
 
 func init() {
-	ListCmd.Flags().StringVar(&namespace, "namespace", "", "Namespace for the data store")
 	ListCmd.Flags().StringVar(&key, "key", "", "key to retrieve from namespace")
 	ListCmd.Flags().BoolVar(&metaData, "meta-data", false, "Whether to retrieve meta-data for an existing key from a namespace")
 	_ = ListCmd.MarkFlagRequired("namespace")

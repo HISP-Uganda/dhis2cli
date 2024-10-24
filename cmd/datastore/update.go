@@ -30,7 +30,7 @@ var UpdateCmd = &cobra.Command{
 }
 
 func init() {
-	ListCmd.Flags().StringVar(&namespace, "namespace", "", "Namespace for the data store")
-	ListCmd.Flags().StringVar(&key, "key", "", "key to retrieve from namespace")
-	ListCmd.Flags().StringVar(&data, "data", "", "JSON representation of the key's value")
+	UpdateCmd.Flags().StringVar(&namespace, "namespace", "", "Namespace for the data store")
+	UpdateCmd.Flags().StringVar(&key, "key", "", "key to retrieve from namespace")
+	UpdateCmd.Flags().StringVar(&data, "data", "", "JSON representation of the key's value")
 }

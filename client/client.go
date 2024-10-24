@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -87,6 +88,8 @@ func (c *Client) GetResource(resourcePath string, params map[string]any) (*resty
 		switch v := value.(type) {
 		case string:
 			queryParams.Add(key, v)
+		case int:
+			queryParams.Add(key, strconv.Itoa(v))
 		case []string:
 			for _, item := range v {
 				queryParams.Add(key, item)

@@ -99,7 +99,7 @@ func init() {
 	rootCmd.AddCommand(tracker.TrackerCmd)
 	rootCmd.AddCommand(orgunit.OrgUnitCmd)
 	rootCmd.AddCommand(metadata.MetaDataCmd)
-	rootCmd.AddCommand(maintenance.PingCmd)
+	rootCmd.AddCommand(maintenance.PingCmd, maintenance.IdentifiersCmd)
 	rootCmd.AddCommand(maintenance.InfoCmd)
 	rootCmd.AddCommand(
 		maintenance.MaintenanceCmd, datastore.DataStoreCmd)

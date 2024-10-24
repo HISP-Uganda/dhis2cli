@@ -29,6 +29,6 @@ var DeleteCmd = &cobra.Command{
 }
 
 func init() {
-	ListCmd.Flags().StringVar(&namespace, "namespace", "", "Namespace for the data store")
-	ListCmd.Flags().StringVar(&key, "key", "", "key to retrieve from namespace")
+	DeleteCmd.Flags().StringVar(&namespace, "namespace", "", "Namespace for the data store")
+	DeleteCmd.Flags().StringVar(&key, "key", "", "key to retrieve from namespace")
 }

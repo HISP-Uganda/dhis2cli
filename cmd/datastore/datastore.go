@@ -9,4 +9,5 @@ var DataStoreCmd = &cobra.Command{
 
 func init() {
 	DataStoreCmd.AddCommand(ListCmd, UpdateCmd, DeleteCmd, CreateCmd)
+	DataStoreCmd.PersistentFlags().StringVar(&namespace, "namespace", "", "Namespace for the data store")
 }

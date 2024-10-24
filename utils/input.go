@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -85,4 +87,51 @@ func GetContentType(format string, compression string) (string, error) {
 	default:
 		return "", fmt.Errorf("unsupported format: %s", format)
 	}
+}
+
+func GetNonDefaultFields(s interface{}) map[string]any {
+	val := reflect.ValueOf(s)
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+
+	nonDefaultFields := make(map[string]any)
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldType := val.Type().Field(i)
+
+		// Get the default value tag
+		defaultTag := fieldType.Tag.Get("default")
+
+		// Ignore fields where the default tag is empty
+		//if defaultTag == "" {
+		//	continue
+		//}
+
+		// Get the json tag; if it's empty, use the field name
+		jsonTag := fieldType.Tag.Get("json")
+		if jsonTag == "" {
+			jsonTag = fieldType.Name
+		}
+
+		// Parse the tag value based on the field type
+		var defaultValue interface{}
+		switch field.Kind() {
+		case reflect.String:
+			defaultValue = defaultTag
+		case reflect.Int:
+			defaultValue, _ = strconv.Atoi(defaultTag)
+		case reflect.Bool:
+			defaultValue, _ = strconv.ParseBool(defaultTag)
+		default:
+			defaultValue = reflect.Zero(field.Type()).Interface()
+		}
+
+		// Check if the field is NOT equal to the default value
+		if !reflect.DeepEqual(field.Interface(), defaultValue) {
+			// Add the field and its value to the map using the json tag as the key
+			nonDefaultFields[jsonTag] = field.Interface()
+		}
+	}
+	return nonDefaultFields
 }

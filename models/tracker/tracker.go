@@ -48,9 +48,9 @@ type Enrollment struct {
 	TrackedEntity   string         `json:"trackedEntity"`
 	Status          string         `json:"status"`
 	OrgUnit         string         `json:"orgUnit"`
-	CreatedAt       time.Time      `json:"createdAt"`
+	CreatedAt       time.Time      `json:"createdAt,omitempty"`
 	CreatedAtClient time.Time      `json:"createdAtClient,omitempty"`
-	UpdatedAt       time.Time      `json:"updatedAt"`
+	UpdatedAt       time.Time      `json:"updatedAt,omitempty"`
 	UpdatedAtClient time.Time      `json:"updatedAtClient,omitempty"`
 	EnrolledAt      time.Time      `json:"enrolledAt"`
 	OccurredAt      time.Time      `json:"occurredAt,omitempty"`
@@ -83,7 +83,7 @@ type Event struct {
 	UpdatedAt                time.Time      `json:"updatedAt"`
 	UpdatedAtClient          time.Time      `json:"updatedAtClient,omitempty"`
 	ScheduledAt              time.Time      `json:"scheduledAt,omitempty"`
-	OccurredAt               time.Time      `json:"occurredAt,omitempty"`
+	OccurredAt               time.Time      `json:"occurredAt"`
 	CompletedAt              time.Time      `json:"completedAt,omitempty"`
 	CompletedBy              string         `json:"completedBy,omitempty"`
 	FollowUp                 bool           `json:"followUp,omitempty"`
