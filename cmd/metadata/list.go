@@ -16,7 +16,7 @@ func init() {
 	ListCmd.Flags().StringVarP(&resource, "resource", "r", "", "The metadata resource")
 	ListCmd.Flags().BoolVar(&useGist, "gist", false, "Whether to use the Gist API")
 	ListCmd.Flags().StringVar(&gistUID, "gist-id", "", "The metadata resource")
-	ListCmd.Flags().StringVar(&gistFieldName, "gist-field", "", "The metadata resource")
+	ListCmd.Flags().StringVar(&gistFieldName, "gist-field", "", "The field name")
 	_ = ListCmd.MarkFlagRequired("resource")
 	_ = ListCmd.RegisterFlagCompletionFunc("resource",
 		func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {

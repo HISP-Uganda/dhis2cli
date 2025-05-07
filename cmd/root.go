@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"dhis2cli/client"
+	"dhis2cli/cmd/analytics"
 	"dhis2cli/cmd/apps"
+	"dhis2cli/cmd/data"
 	"dhis2cli/cmd/datastore"
+	"dhis2cli/cmd/geojson"
 	"dhis2cli/cmd/maintenance"
 	"dhis2cli/cmd/metadata"
 	"dhis2cli/cmd/orgunit"
@@ -103,6 +106,8 @@ func init() {
 	rootCmd.AddCommand(maintenance.InfoCmd)
 	rootCmd.AddCommand(
 		maintenance.MaintenanceCmd, datastore.DataStoreCmd)
+	rootCmd.AddCommand(data.DataCmd, analytics.AnalyticsCmd)
+	rootCmd.AddCommand(geojson.GeoJsonCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.

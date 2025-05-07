@@ -12,5 +12,8 @@ var MaintenanceCmd = &cobra.Command{
 
 func init() {
 	MaintenanceCmd.AddCommand(
-		ViewAsyncTasksStatusCmd, ViewAsyncTaskSummariesCmd, OperationsCmd)
+		ViewAsyncTasksStatusCmd,
+		ViewAsyncTaskSummariesCmd,
+		OperationsCmd,
+		ResourceTablesCmd)
 }

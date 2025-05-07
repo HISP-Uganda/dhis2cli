@@ -90,6 +90,13 @@ func (c *Client) GetResource(resourcePath string, params map[string]any) (*resty
 			queryParams.Add(key, v)
 		case int:
 			queryParams.Add(key, strconv.Itoa(v))
+		case bool:
+			// Convert boolean to string and add it
+			if v {
+				queryParams.Add(key, "true")
+			} else {
+				queryParams.Add(key, "false")
+			}
 		case []string:
 			for _, item := range v {
 				queryParams.Add(key, item)
@@ -123,6 +130,12 @@ func (c *Client) PostResource(resourcePath string, params map[string]any, data i
 		switch v := value.(type) {
 		case string:
 			queryParams.Add(key, v)
+		case bool:
+			if v {
+				queryParams.Add(key, "true")
+			} else {
+				queryParams.Add(key, "false")
+			}
 		case []string:
 			for _, item := range v {
 				queryParams.Add(key, item)
