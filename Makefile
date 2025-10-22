@@ -45,15 +45,15 @@ deps:
 
 # Cross compile for Unix
 build-linux:
-	GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags "-X cmd.version=$(VERSION)" -o $(BINARY_UNIX) -v
+	GOOS=linux GOARCH=amd64 $(GOBUILD) -ldflags "-s -w -X cmd.version=$(VERSION)" -o $(BINARY_UNIX) -v
 
 # Cross compile for Unix
 build-macos:
-	GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags "-X cmd.version=$(VERSION)" -o $(BINARY_UNIX) -v
+	GOOS=darwin GOARCH=amd64 $(GOBUILD) -ldflags "-s -w -X cmd.version=$(VERSION)" -o $(BINARY_UNIX) -v
 
 # Cross compile for Windows
 build-windows:
-	GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags "-X cmd.version=$(VERSION)" -o $(BINARY_NAME).exe -v
+	GOOS=windows GOARCH=amd64 $(GOBUILD) -ldflags "-s -w -X cmd.version=$(VERSION)" -o $(BINARY_NAME).exe -v
 
 # Install the binary to $HOME/bin
 install: build
